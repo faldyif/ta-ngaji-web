@@ -162,6 +162,9 @@ return [
 
         Laravel\Passport\PassportServiceProvider::class,
 
+        // Jrean User Email Verification
+        Jrean\UserVerification\UserVerificationServiceProvider::class,
+
     ],
 
     /*
@@ -210,7 +213,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        // Jrean User Email Verification
+        'UserVerification' => Jrean\UserVerification\Facades\UserVerification::class,
     ],
 
 ];

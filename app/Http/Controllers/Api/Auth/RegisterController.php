@@ -25,22 +25,22 @@ class RegisterController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
+            'gender' => 'required|in:M,F'
         ]);
 
         $user = User::create([
             'name' => request('name'),
             'email' => request('email'),
-            'password' => bcrypt(request('password'))
+            'password' => bcrypt(request('password')),
+            'gender' => request('gender')
         ]);
 
 
         UserVerification::generate($user);
-
-        UserVerification::send($user, 'Verifikasi Email NgajiTA');
+        UserVerification::send($user, 'Verifikasi Email ' . env('APP_NAME'));
 
         $response = array(
-            'success' => true,
             'message' => 'Silahkan cek kotak masuk email anda dan klik pada link yang terdapat didalam email tersebut untuk memverifikasi kepemilikan email anda'
         );
 

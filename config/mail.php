@@ -120,4 +120,13 @@ return [
         ],
     ],
 
+    // Additional configuration files for SSL errors on localhost servers. Please remove this lines before publishing
+    'stream' => [
+        'ssl' => [
+            'allow_self_signed' => true,
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+        ],
+    ],
+
 ];

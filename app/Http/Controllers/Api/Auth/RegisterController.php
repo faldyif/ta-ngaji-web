@@ -26,14 +26,16 @@ class RegisterController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-            'gender' => 'required|in:M,F'
+            'gender' => 'required|in:M,F',
+            'whatsapp_number' => 'required|regex:/^\+?[0-9]{9,}$/'
         ]);
 
         $user = User::create([
             'name' => request('name'),
             'email' => request('email'),
             'password' => bcrypt(request('password')),
-            'gender' => request('gender')
+            'gender' => request('gender'),
+            'whatsapp_number' => request('whatsapp_number')
         ]);
 
 

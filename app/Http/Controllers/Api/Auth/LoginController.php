@@ -44,6 +44,8 @@ class LoginController extends Controller
                     ]
                 );
             }
+        } else {
+            return $this->issueToken($request, 'password');
         }
 
 

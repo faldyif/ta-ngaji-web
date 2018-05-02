@@ -20,11 +20,12 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('whatsapp_number')->nullable();
             $table->char('gender');
-            $table->integer('role_id')->default(1); // 1 is user, 2 for superadmin
+            $table->integer('role_id')->default(1); // 1 is user, 2 for ustadz/ah, 3 for superadmin
             $table->decimal('credits_amount')->default(0);
             $table->integer('experience_points')->default(0);
             $table->integer('level')->default(1);
             $table->integer('loyalty_points')->default(0);
+            $table->unsignedInteger('linked_id')->nullable(); // if teacher
             $table->rememberToken();
             $table->timestamps();
         });

@@ -15,7 +15,7 @@ class CreateEventsTable extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('event_type');
+            $table->integer('event_type'); // 1 for tahsin, 2 for tahfidz, 3 for both, 4 for tadabbur
             $table->unsignedInteger('teacher_id');
             $table->foreign('teacher_id')->references('id')->on('teacher_registeries')->onDelete('cascade');
             $table->string('short_place_name')->nullable();

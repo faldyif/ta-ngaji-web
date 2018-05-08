@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTeacherRegisteriesTable extends Migration
+class CreateEventTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,16 @@ class CreateTeacherRegisteriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('teacher_registeries', function (Blueprint $table) {
+        Schema::create('event_transactions', function (Blueprint $table) {
             $table->increments('id');
+
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->dateTime('registered_from');
-            $table->integer('minimum_points');
-            $table->text('home_short_name')->nullable();
-            $table->double('home_latitude')->nullable();
-            $table->double('home_longitude')->nullable();
+            $table->unsignedInteger('event_id');
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
+            $table->decimal('amount');
+            $table->integer('status')->default(1); // 1 for success, 2 for reversal
+
             $table->timestamps();
         });
     }
@@ -33,6 +34,6 @@ class CreateTeacherRegisteriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('teacher_registeries');
+        Schema::dropIfExists('event_transactions');
     }
 }

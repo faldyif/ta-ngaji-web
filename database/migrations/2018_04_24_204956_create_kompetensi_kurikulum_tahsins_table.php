@@ -15,6 +15,13 @@ class CreateKompetensiKurikulumTahsinsTable extends Migration
     {
         Schema::create('kompetensi_kurikulum_tahsins', function (Blueprint $table) {
             $table->increments('id');
+
+            $table->unsignedInteger('kurikulum_id');
+            $table->foreign('kurikulum_id')->references('id')->on('kompetensi_kurikulum_tahsins')->onDelete('cascade');
+            $table->string('kompetensi');
+            $table->text('materi_pokok');
+            $table->integer('waktu_menit');
+
             $table->timestamps();
         });
     }

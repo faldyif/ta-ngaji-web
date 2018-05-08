@@ -15,6 +15,11 @@ class CreateKurikulumTahsinsTable extends Migration
     {
         Schema::create('kurikulum_tahsins', function (Blueprint $table) {
             $table->increments('id');
+
+            $table->string('nama_kurikulum');
+            $table->text('deskripsi');
+            $table->integer('total_waktu');
+
             $table->timestamps();
         });
     }

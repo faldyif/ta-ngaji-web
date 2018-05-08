@@ -25,7 +25,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'email', 'credits_amount', 'loyalty_points', 'verified', 'verification_token', 'experience_points'
     ];
 
     public function teacherRegistery() {

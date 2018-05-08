@@ -15,6 +15,18 @@ class CreateTahsinLogsTable extends Migration
     {
         Schema::create('tahsin_logs', function (Blueprint $table) {
             $table->increments('id');
+
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedInteger('attendee_log_id');
+            $table->foreign('attendee_log_id')->references('id')->on('attendee_logs')->onDelete('cascade');
+            $table->unsignedInteger('kompetensi_kurikulum_id');
+            $table->foreign('kompetensi_kurikulum_id')->references('id')->on('kompetensi_kurikulum_tahsins')->onDelete('cascade');
+            $table->double('percentage');
+            $table->integer('grade');
+
+            $table->integer('ayah_number');
+
             $table->timestamps();
         });
     }

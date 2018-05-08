@@ -25,5 +25,6 @@ $factory->define(App\User::class, function (Faker $faker) {
         'whatsapp_number' => '+628' . $faker->unique()->randomNumber($nbDigits = 9, $strict = false),
         'gender' => ($gender == 'male' ? 'M' : 'F'),
         'role_id' => 1,
+        'verified' => $faker->boolean,
     ];
 });

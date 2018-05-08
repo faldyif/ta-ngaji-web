@@ -13,10 +13,19 @@ use Illuminate\Http\Request;
 |
 */
 
+
+// Authentication routes
 Route::post('register', 'Api\Auth\RegisterController@register');
 Route::post('login', 'Api\Auth\LoginController@login');
 Route::post('refresh', 'Api\Auth\LoginController@refresh');
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+
+
+Route::middleware(['auth:api'])->group(function () {
+
+    Route::get('event', 'Api\EventController@index');
+    Route::get('user', function (Request $request) {
+        return $request->user();
+    });
+
 });

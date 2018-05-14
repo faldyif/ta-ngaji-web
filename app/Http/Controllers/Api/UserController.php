@@ -2,33 +2,29 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Event;
-use App\Http\Resources\EventResource;
-use App\Http\Resources\EventsResource;
+use App\Http\Resources\SelfUserResource;
+use App\Http\Resources\UserResource;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
-class EventController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return EventsResource
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return new EventsResource(Event::with(['teacher.user'])->paginate());
-    }
-
-    public function indexFiltered(Request $request)
-    {
-        return new EventsResource(Event::with(['teacher.user'])->paginate());
+        //
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -38,8 +34,8 @@ class EventController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @return void
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -49,14 +45,22 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Event $event
-     * @return EventResource
+     * @param User $user
+     * @return UserResource
      */
-    public function show(Event $event)
+    public function show(User $user)
     {
-        EventResource::withoutWrapping();
+        UserResource::withoutWrapping();
 
-        return new EventResource($event);
+        return new UserResource($user);
+    }
+
+    public function showOwnProfile() {
+        SelfUserResource::withoutWrapping();
+
+        $user = Auth::user();
+
+        return new SelfUserResource(Auth::user());
     }
 
     /**

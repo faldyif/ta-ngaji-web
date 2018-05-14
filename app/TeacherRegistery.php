@@ -11,6 +11,6 @@ class TeacherRegistery extends Model
     }
 
     public function events() {
-        return $this->hasMany('App\Event');
+        return $this->hasMany('App\Event', 'teacher_id');
     }
 }

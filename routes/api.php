@@ -20,12 +20,27 @@ Route::post('login', 'Api\Auth\LoginController@login');
 Route::post('refresh', 'Api\Auth\LoginController@refresh');
 
 
+// Middleware 'onlyJsonApi', 'auth:api'
+Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->group(function () {
 
-Route::middleware(['auth:api'])->group(function () {
+    //-- Begin Own User Routes --//
+    Route::get('profile', 'UserController@showOwnProfile')->name('user.profile');
+    //-- End Own User Routes --//
 
-    Route::get('event', 'Api\EventController@index');
+    //-- Begin User Routes --//
+    Route::resource('users', 'UserController');
+    //-- End Event Routes --//
+
+    //-- Begin Event Routes --//
+    Route::resource('events', 'EventController');
+    Route::get('events/{event}/relationships/teacher', 'EventRelationshipController@teacher')->name('events.relationships.teacher');
+    Route::get('events/{event}/teacher', 'EventRelationshipController@teacher')->name('events.teacher');
+    //-- End Event Routes --//
+
     Route::get('user', function (Request $request) {
         return $request->user();
     });
+
+    Route::get('test', 'TestingController@test');
 
 });

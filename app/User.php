@@ -31,4 +31,19 @@ class User extends Authenticatable
     public function teacherRegistery() {
         return $this->hasOne('App\TeacherRegistery');
     }
+
+    // Show gender
+    public function gender() {
+        if($this->gender == 'M') return 'male';
+        else if($this->gender == 'F') return 'female';
+        else return null;
+    }
+
+    // Show role
+    public function role() {
+        if($this->role_id == 1) return 'user';
+        else if($this->role_id == 2) return 'teacher';
+        else if($this->role_id == 3) return 'superadmin';
+        else return null;
+    }
 }

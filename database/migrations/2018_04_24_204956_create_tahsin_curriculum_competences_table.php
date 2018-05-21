@@ -13,7 +13,7 @@ class CreateKompetensiKurikulumTahsinsTable extends Migration
      */
     public function up()
     {
-        Schema::create('kompetensi_kurikulum_tahsins', function (Blueprint $table) {
+        Schema::create('tahsin_curriculum_competences', function (Blueprint $table) {
             $table->increments('id');
 
             $table->unsignedInteger('kurikulum_id');
@@ -33,6 +33,6 @@ class CreateKompetensiKurikulumTahsinsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kompetensi_kurikulum_tahsins');
+        Schema::dropIfExists('tahsin_curriculum_competences');
     }
 }

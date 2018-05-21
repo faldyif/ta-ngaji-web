@@ -13,7 +13,7 @@ class CreateKurikulumTahsinsTable extends Migration
      */
     public function up()
     {
-        Schema::create('kurikulum_tahsins', function (Blueprint $table) {
+        Schema::create('tahsin_curriculums', function (Blueprint $table) {
             $table->increments('id');
 
             $table->string('nama_kurikulum');
@@ -31,6 +31,6 @@ class CreateKurikulumTahsinsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kurikulum_tahsins');
+        Schema::dropIfExists('tahsin_curriculums');
     }
 }

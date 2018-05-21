@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 class TestingController extends Controller
 {
     public function test() {
+
+    }
+
+
+    public function testTime() {
         $startTime = Carbon::now();
         $endTime = Carbon::now();
 

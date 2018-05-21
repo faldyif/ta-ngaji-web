@@ -22,7 +22,35 @@ class EventController extends Controller
 
     public function indexFiltered(Request $request)
     {
-        return new EventsResource(Event::with(['teacher.user'])->paginate());
+        $this->validate($request, [
+            'time_start' => 'required|date_format:Y-m-d H:i:s',
+            'time_end' => 'required|date_format:Y-m-d H:i:s',
+            'latitude' => 'required', // TODO: ini validasi
+            'longitude' => 'required', // TODO: ini validasi
+            'max_points' => 'required|integer',
+            'event_type' => 'required'
+        ]);
+
+        $eventFiltered = Event::with(['teacher.user'])
+            ->timeBetween($request->time_start, $request->time_end)
+            ->isWithinMaxDistance($request->latitude, $request->longitude)
+            ->maxPoints($request->max_points);
+
+        switch ($request->event_type) {
+            case 'tahsin':
+                $eventFiltered = $eventFiltered->tahsin();
+                break;
+            case 'tahfidz':
+                $eventFiltered = $eventFiltered->tahfidz();
+                break;
+            case 'tadabbur':
+                $eventFiltered = $eventFiltered->tadabbur();
+                break;
+            default:
+                break;
+        }
+
+        return new EventsResource($eventFiltered->paginate());
     }
 
     /**

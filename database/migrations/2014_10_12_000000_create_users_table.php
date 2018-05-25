@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->integer('level')->default(1);
             $table->integer('loyalty_points')->default(0);
             $table->unsignedInteger('linked_id')->nullable(); // if teacher
+            $table->string('timezone')->default('Asia/Jakarta'); // dafault time of WIB (UTC +7)
             $table->rememberToken();
             $table->timestamps();
         });

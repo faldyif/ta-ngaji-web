@@ -15,9 +15,7 @@ $factory->define(\App\Event::class, function (Faker $faker) {
         'latitude' => $faker->latitude($min = -7.89, $max = -7.75),
         'longitude' => $faker->longitude($min = 110.27, $max = 110.48),
 //        'is_available' => $faker->boolean,
-        'is_available' => true,
         'start_time' => $dateTimeStart,
         'end_time' => $dateTimeEnd,
-        'points_offered' => $faker->biasedNumberBetween(-1000, 100),
     ];
 });

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEventsTable extends Migration
+class CreateTeacherFreeTimesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,17 @@ class CreateEventsTable extends Migration
      */
     public function up()
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('teacher_free_times', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('event_type'); // 1 for tahsin, 2 for tahfidz, 3 for both, 4 for tadabbur
             $table->unsignedInteger('teacher_id');
             $table->foreign('teacher_id')->references('id')->on('teacher_registeries')->onDelete('cascade');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
+            $table->boolean('fixed_place');
             $table->string('short_place_name')->nullable();
             $table->double('latitude')->nullable();
             $table->double('longitude')->nullable();
-            $table->dateTime('start_time');
-            $table->dateTime('end_time');
+
             $table->timestamps();
         });
     }
@@ -34,6 +35,6 @@ class CreateEventsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('teacher_free_times');
     }
 }

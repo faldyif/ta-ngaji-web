@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTahsinCurriculumsTable extends Migration
+class CreateTeacherLevelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateTahsinCurriculumsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tahsin_curriculums', function (Blueprint $table) {
+        Schema::create('teacher_levels', function (Blueprint $table) {
             $table->increments('id');
-
-            $table->string('curriculum_name');
-            $table->text('description');
-            $table->unsignedInteger('time_total');
-
+            $table->string('name');
+            $table->string('points');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreateTahsinCurriculumsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tahsin_curriculums');
+        Schema::dropIfExists('teacher_levels');
     }
 }

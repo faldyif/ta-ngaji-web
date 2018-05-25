@@ -21,7 +21,7 @@ class CreateTransferTransactionsTable extends Migration
             $table->unsignedInteger('to_user_id');
             $table->foreign('to_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->decimal('amount');
-            $table->string('message');
+            $table->string('message')->nullable();
             $table->integer('transaction_type'); // 1 for topup, 2 for direct normal transfer
             $table->integer('status')->default(1); // 1 for success, 2 for reversal
 

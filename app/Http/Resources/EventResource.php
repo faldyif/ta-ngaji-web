@@ -20,11 +20,11 @@ class EventResource extends JsonResource
             'short_place_name' => $this->short_place_name,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-            'is_available' => $this->is_available,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
-            'points_offered' => $this->points_offered,
+            'points_offered' => $this->teacher->level->points,
             'teacher'   => new UserResource($this->user()),
+            'student'   => new UserResource($this->student),
         ];
     }
 }

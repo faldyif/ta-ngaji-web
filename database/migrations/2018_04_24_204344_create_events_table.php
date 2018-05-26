@@ -18,6 +18,8 @@ class CreateEventsTable extends Migration
             $table->integer('event_type'); // 1 for tahsin, 2 for tahfidz, 3 for both, 4 for tadabbur
             $table->unsignedInteger('teacher_id');
             $table->foreign('teacher_id')->references('id')->on('teacher_registeries')->onDelete('cascade');
+            $table->unsignedInteger('student_id');
+            $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('short_place_name')->nullable();
             $table->double('latitude')->nullable();
             $table->double('longitude')->nullable();

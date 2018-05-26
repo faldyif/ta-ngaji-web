@@ -46,4 +46,12 @@ class User extends Authenticatable
         else if($this->role_id == 3) return 'superadmin';
         else return null;
     }
+
+    public function scopeStudent($query) {
+        return $query->where('role_id', 1);
+    }
+
+    public function scopeTeacher($query) {
+        return $query->where('role_id', 2);
+    }
 }

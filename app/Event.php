@@ -10,6 +10,10 @@ class Event extends Model
         return $this->belongsTo('App\TeacherRegistery', 'teacher_id');
     }
 
+    public function student() {
+        return $this->belongsTo('App\User', 'student_id');
+    }
+
     public function eventType() {
         switch ($this->event_type) {
             case 1:

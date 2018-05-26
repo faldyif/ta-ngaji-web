@@ -13,4 +13,9 @@ class TeacherRegistery extends Model
     public function events() {
         return $this->hasMany('App\Event', 'teacher_id');
     }
+
+    public function level() {
+        return $this->hasOne('App\TeacherLevel', 'id', 'teacher_level_id');
+    }
+
 }

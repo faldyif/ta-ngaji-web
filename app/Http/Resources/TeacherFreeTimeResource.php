@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class EventResource extends JsonResource
+class TeacherFreeTimeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,17 +14,17 @@ class EventResource extends JsonResource
      */
     public function toArray($request)
     {
+        PrivateEventsResource::withoutWrapping();
         return [
             'id'            => (string)$this->id,
-            'event_type' => $this->eventType(),
+            'fixed_place' => $this->fixed_place,
             'short_place_name' => $this->short_place_name,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
-            'points_offered' => $this->teacher->level->points,
             'teacher'   => new UserResource($this->user),
-            'student'   => new UserResource($this->student),
+            'events' => new PrivateEventsResource($this->events($this->start_time, $this->end_time)),
         ];
     }
 }

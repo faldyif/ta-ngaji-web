@@ -38,8 +38,10 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
     //-- Begin Event Routes --//
     Route::resource('events', 'EventController');
     Route::get('events/filter/all', 'EventController@indexFiltered');
-    Route::get('events/{event}/relationships/teacher', 'EventRelationshipController@teacher')->name('events.relationships.teacher');
-    Route::get('events/{event}/teacher', 'EventRelationshipController@teacher')->name('events.teacher');
+    //-- End Event Routes --//
+
+    //-- Begin Teacher Free Time Routes --//
+    Route::resource('finder/events', 'TeacherFreeTimeController');
     //-- End Event Routes --//
 
     Route::get('user', function (Request $request) {

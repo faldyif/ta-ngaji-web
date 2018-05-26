@@ -31,7 +31,7 @@ class Event extends Model
         }
     }
 
-    public function user() {
+    public function getUserAttribute() {
         return $this->teacher->user;
     }
 

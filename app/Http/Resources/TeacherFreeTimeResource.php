@@ -17,12 +17,12 @@ class TeacherFreeTimeResource extends JsonResource
         PrivateEventsResource::withoutWrapping();
         return [
             'id'            => (string)$this->id,
-            'fixed_place' => $this->fixed_place,
             'short_place_name' => $this->short_place_name,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
+            'distance' => $this->distance,
             'teacher'   => new UserResource($this->user),
             'events' => new PrivateEventsResource($this->events($this->start_time, $this->end_time)),
         ];

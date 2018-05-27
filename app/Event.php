@@ -40,11 +40,14 @@ class Event extends Model
         return $query->where('is_available', true);
     }
 
+    public function scopeTimeInside($query, $startTime, $endTime)
+    {
+        return $query->whereDate('start_time', '>=', $startTime)->whereDate('end_time', '<=', $endTime);
+    }
+
     public function scopeTimeBetween($query, $startTime, $endTime)
     {
-        // cari yang mana waktu satu event ngaji yang dibuat oleh guru kurang dari sama dengan waktu mulai
-        // dan waktu selesai yang dibuat oleh guru harus lebih dari waktu selesai yang dicari oleh siswa
-        return $query->whereDate('start_time', '<=', $startTime)->whereDate('end_time', '<=', $endTime);
+        return $query->whereDate('start_time', '<=', $startTime)->whereDate('end_time', '>=', $endTime);
     }
 
     // To count max distance (in kilometre), ordered by the shortest distance from current location

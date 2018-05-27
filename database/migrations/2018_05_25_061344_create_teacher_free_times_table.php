@@ -19,7 +19,6 @@ class CreateTeacherFreeTimesTable extends Migration
             $table->foreign('teacher_id')->references('id')->on('teacher_registeries')->onDelete('cascade');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            $table->boolean('fixed_place');
             $table->string('short_place_name')->nullable();
             $table->double('latitude')->nullable();
             $table->double('longitude')->nullable();

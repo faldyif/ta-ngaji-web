@@ -41,7 +41,8 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
     //-- End Event Routes --//
 
     //-- Begin Teacher Free Time Routes --//
-    Route::resource('finder/events', 'TeacherFreeTimeController');
+    Route::get('finder/events', 'TeacherFreeTimeController@index');
+    Route::get('finder/events/filter', 'TeacherFreeTimeController@indexFiltered');
     //-- End Event Routes --//
 
     Route::get('user', function (Request $request) {

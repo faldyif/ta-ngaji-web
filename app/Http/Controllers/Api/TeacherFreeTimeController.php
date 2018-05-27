@@ -22,6 +22,31 @@ class TeacherFreeTimeController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return TeacherFreeTimesResource
+     */
+    public function indexFiltered(Request $request)
+    {
+        $this->validate($request, [
+            'time_start' => 'required|date_format:Y-m-d H:i:s',
+            'time_end' => 'required|date_format:Y-m-d H:i:s',
+            'latitude' => 'required', // TODO: ini validasi
+            'longitude' => 'required', // TODO: ini validasi
+            'event_type' => 'required'
+        ]);
+
+        $teacherFreeTimes = TeacherFreeTime::with('teacher')
+            ->where('start_time', '<=', $request->time_start)
+            ->where('end_time', '>=', $request->time_end)
+            ->isWithinMaxDistance($request->latitude, $request->longitude)
+            ->get();
+
+        return new TeacherFreeTimesResource($teacherFreeTimes);
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response

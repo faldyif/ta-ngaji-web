@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->integer('level')->default(1);
             $table->integer('loyalty_points')->default(0);
             $table->string('timezone')->default('Asia/Jakarta'); // dafault time of WIB (UTC +7)
+            $table->string('profile_pic_path')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

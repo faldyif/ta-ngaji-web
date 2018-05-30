@@ -18,7 +18,7 @@ class CreateTadabburEventsTable extends Migration
             $table->unsignedInteger('event_id');
             $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->string('topic');
-            $table->string('poster_url');
+            $table->string('poster_image_path')->nullable();
             $table->text('description');
             $table->integer('attendee_quota');
             $table->integer('remaining_quota');

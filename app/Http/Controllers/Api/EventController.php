@@ -7,6 +7,7 @@ use App\Http\Resources\EventResource;
 use App\Http\Resources\EventsResource;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -71,7 +72,38 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'event_type' => 'required',
+            'teacher_id' => 'required',
+            'short_place_name' => '',
+            'latitude' => 'required', // TODO: ini validasi
+            'longitude' => 'required', // TODO: ini validasi
+            'time_start' => 'required|date_format:Y-m-d H:i:s',
+            'time_end' => 'required|date_format:Y-m-d H:i:s',
+        ]);
+
+        $event_type = null;
+        if($request->event_type == "tahsin") {
+            $event_type = 1;
+        } else if($request->event_type == "tahfidz") {
+            $event_type = 2;
+        } else if($request->event_type == "tadabbur") {
+            $event_type = 3;
+        }
+        $event = new Event;
+        $event->event_type = $event_type;
+        $event->teacher_id = $request->teacher_id;
+        $event->student_id = Auth::user()->id;
+        $event->short_place_name = $request->short_place_name;
+        $event->latitude = $request->latitude;
+        $event->longitude = $request->longitude;
+        $event->start_time = $request->time_start;
+        $event->end_time = $request->time_end;
+        $event->save();
+
+        return response()->json([
+            'error' => 'false'
+        ]);
     }
 
     /**

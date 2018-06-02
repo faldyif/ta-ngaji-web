@@ -37,11 +37,23 @@ class TeacherFreeTimeController extends Controller
             'event_type' => 'required'
         ]);
 
-        $teacherFreeTimes = TeacherFreeTime::with('teacher')
+        $eventType = $request->event_type;
+        $competence = [];
+        if($eventType == 'tahsin') {
+            array_push($competence, 1);
+            array_push($competence, 3);
+        } else if($eventType == 'tahfidz') {
+            array_push($competence, 2);
+            array_push($competence, 3);
+        }
+
+        $teacherFreeTimes = TeacherFreeTime::with(['teacher'])
             ->where('start_time', '<=', $request->time_start)
             ->where('end_time', '>=', $request->time_end)
             ->isWithinMaxDistance($request->latitude, $request->longitude)
             ->get();
+
+//        return response()->json($teacherFreeTimes);
 
         return new TeacherFreeTimesResource($teacherFreeTimes);
     }

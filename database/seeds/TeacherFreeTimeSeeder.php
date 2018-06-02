@@ -11,6 +11,6 @@ class TeacherFreeTimeSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\TeacherFreeTime::class, 50)->create();
+        factory(App\TeacherFreeTime::class, 1000)->create();
     }
 }

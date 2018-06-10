@@ -35,6 +35,19 @@ class Event extends Model
         return $this->teacher->user;
     }
 
+    public function getStatusAttribute() {
+        switch ($this->accepted) {
+            case null:
+                return "pending";
+            case true:
+                return "accepted";
+            case false:
+                return "rejected";
+            default:
+                return null;
+        }
+    }
+
     public function scopeAvailable($query)
     {
         return $query->where('is_available', true);

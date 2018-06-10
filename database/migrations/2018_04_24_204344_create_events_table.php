@@ -26,6 +26,7 @@ class CreateEventsTable extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->boolean('accepted')->nullable();
+            $table->text('location_details')->nullable();
             $table->timestamps();
         });
     }

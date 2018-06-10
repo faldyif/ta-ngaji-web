@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Event;
 use App\Http\Resources\EventResource;
 use App\Http\Resources\EventsResource;
+use App\TeacherFreeTime;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -16,9 +19,27 @@ class EventController extends Controller
      *
      * @return EventsResource
      */
-    public function index()
+    public function index(Request $request)
     {
-        return new EventsResource(Event::with(['teacher.user'])->paginate());
+        $this->validate($request, [
+            'active' => 'required|boolean'
+        ]);
+
+        if($request->active) {
+            $user = Auth::user();
+            $event = Event::with(['teacher.user'])
+                ->where('student_id', $user->id)
+                ->whereDate('end_time', '>', Carbon::now())
+                ->get();
+            return new EventsResource($event);
+        } else {
+            $user = Auth::user();
+            $event = Event::with(['teacher.user'])
+                ->where('student_id', $user->id)
+                ->whereDate('end_time', '<', Carbon::now())
+                ->get();
+            return new EventsResource($event);
+        }
     }
 
     public function indexFiltered(Request $request)
@@ -74,13 +95,16 @@ class EventController extends Controller
     {
         $this->validate($request, [
             'event_type' => 'required',
-            'teacher_id' => 'required',
+            'teacher_free_time_id' => 'required',
             'short_place_name' => '',
+            'location_details' => 'required',
             'latitude' => 'required', // TODO: ini validasi
             'longitude' => 'required', // TODO: ini validasi
             'time_start' => 'required|date_format:Y-m-d H:i:s',
             'time_end' => 'required|date_format:Y-m-d H:i:s',
         ]);
+
+        $teacher_free_time = TeacherFreeTime::find($request->teacher_free_time_id);
 
         $event_type = null;
         if($request->event_type == "tahsin") {
@@ -92,17 +116,18 @@ class EventController extends Controller
         }
         $event = new Event;
         $event->event_type = $event_type;
-        $event->teacher_id = $request->teacher_id;
+        $event->teacher_id = $teacher_free_time->teacher->id;
         $event->student_id = Auth::user()->id;
         $event->short_place_name = $request->short_place_name;
         $event->latitude = $request->latitude;
         $event->longitude = $request->longitude;
+        $event->location_details = $request->location_details;
         $event->start_time = $request->time_start;
         $event->end_time = $request->time_end;
         $event->save();
 
         return response()->json([
-            'error' => 'false'
+            'error' => false
         ]);
     }
 

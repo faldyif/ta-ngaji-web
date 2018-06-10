@@ -14,6 +14,7 @@ $factory->define(\App\Event::class, function (Faker $faker) {
         'teacher_id' => $randomTeacher->id,
         'student_id' => $randomStudent->id,
         'short_place_name' => $faker->streetAddress,
+        'location_details' => $faker->paragraph($nbSentences = 3, $variableNbSentences = true),
         'latitude' => $faker->latitude($min = -7.89, $max = -7.75),
         'longitude' => $faker->longitude($min = 110.27, $max = 110.48),
 //        'is_available' => $faker->boolean,

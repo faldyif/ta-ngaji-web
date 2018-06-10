@@ -22,7 +22,10 @@ class EventResource extends JsonResource
             'longitude' => $this->longitude,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
+            'status' => $this->status,
+            'location_details' => $this->location_details,
             'points_offered' => $this->teacher->level->points,
+            'teacher_rank' => $this->user->teacherRegistery->teacher_level_id,
             'teacher'   => new UserResource($this->user),
             'student'   => new UserResource($this->student),
         ];

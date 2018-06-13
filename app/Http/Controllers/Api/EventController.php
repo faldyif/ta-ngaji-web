@@ -42,6 +42,29 @@ class EventController extends Controller
         }
     }
 
+    public function indexHistory(Request $request)
+    {
+        $this->validate($request, [
+            'status' => 'required'
+        ]);
+
+        $user = Auth::user();
+        $event = Event::query();
+        $event->with(['teacher.user']);
+        $event->where('student_id', $user->id);
+        $event->whereDate('end_time', '<', Carbon::now());
+
+        if($request->status === "pending") {
+            $event->where('accepted', null);
+        } else if($request->status === "rejected") {
+            $event->where('accepted', 0);
+        } else if($request->status === "accepted") {
+            $event->where('accepted', 1);
+        }
+
+        return new EventsResource($event->get());
+    }
+
     public function indexFiltered(Request $request)
     {
         $this->validate($request, [
@@ -126,9 +149,7 @@ class EventController extends Controller
         $event->end_time = $request->time_end;
         $event->save();
 
-        return response()->json([
-            'error' => false
-        ]);
+        return response()->json([], 204);
     }
 
     /**

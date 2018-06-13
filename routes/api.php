@@ -24,7 +24,8 @@ Route::post('refresh', 'Api\Auth\LoginController@refresh');
 Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->group(function () {
 
     //-- Begin Authentication Routes --//
-    Route::post('logout', 'Api\Auth\LoginController@logout'); // Logout
+    Route::post('logout', 'Auth\LoginController@logout'); // Logout
+    Route::put('firebase/token', 'FirebaseController@updateFirebaseToken'); // Update firebase token
     //-- End Authentication Routes --//
 
     //-- Begin Own User Routes --//
@@ -37,6 +38,7 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
 
     //-- Begin Event Routes --//
     Route::resource('events', 'EventController');
+    Route::get('history/events', 'EventController@indexHistory');
     Route::get('events/filter/all', 'EventController@indexFiltered');
     //-- End Event Routes --//
 

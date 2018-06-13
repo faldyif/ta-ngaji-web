@@ -32,6 +32,10 @@ class User extends Authenticatable
         return $this->hasOne('App\TeacherRegistery');
     }
 
+    public function firebaseTokens() {
+        return $this->hasMany('App\UserFirebaseToken');
+    }
+
     // Show gender
     public function gender() {
         if($this->gender == 'M') return 'male';

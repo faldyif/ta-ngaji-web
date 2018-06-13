@@ -36,15 +36,12 @@ class Event extends Model
     }
 
     public function getStatusAttribute() {
-        switch ($this->accepted) {
-            case null:
-                return "pending";
-            case true:
-                return "accepted";
-            case false:
-                return "rejected";
-            default:
-                return null;
+        if($this->accepted === null) {
+            return "pending";
+        } else if($this->accepted == true) {
+            return "accepted";
+        } else if($this->accepted == false) {
+            return "rejected";
         }
     }
 

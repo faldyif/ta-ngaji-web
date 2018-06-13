@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use App\UserFirebaseToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,8 @@ class LoginController extends Controller
 
         $this->validate($request, [
             'username' => 'required',
-            'password' => 'required'
+            'password' => 'required',
+            'firebase_token' => 'required',
         ]);
 
         $userAttempt = Auth::attempt(['email' => $request->username, 'password' => $request->password]);
@@ -35,6 +37,12 @@ class LoginController extends Controller
             $user = User::where('email', $request->username)->first();
 
             if ($user->verified) {
+                if(Auth::attempt(['email' => $request->username, 'password' => $request->password])) {
+                    UserFirebaseToken::updateOrCreate(
+                        ['firebase_token' => $request->firebase_token],
+                        ['user_id' => $user->id]
+                    );
+                }
                 return $this->issueToken($request, 'password');
             } else {
                 return array(
@@ -63,8 +71,14 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-
+        $this->validate($request, [
+            'firebase_token' => 'required'
+        ]);
         $accessToken = Auth::user()->token();
+
+        UserFirebaseToken::where('firebase_token', $request->firebase_token)
+            ->where('user_id', Auth::user()->id)
+            ->delete();
 
         DB::table('oauth_refresh_tokens')
             ->where('access_token_id', $accessToken->id)

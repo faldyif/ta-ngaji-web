@@ -52,7 +52,7 @@ class EventController extends Controller
         $event = Event::query();
         $event->with(['teacher.user']);
         $event->where('student_id', $user->id);
-        $event->whereDate('end_time', '<', Carbon::now());
+        $event->whereDate('end_time', '>', Carbon::now());
 
         if($request->status === "pending") {
             $event->where('accepted', null);

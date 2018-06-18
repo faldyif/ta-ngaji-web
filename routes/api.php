@@ -51,6 +51,6 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
         return $request->user();
     });
 
-    Route::get('test', 'TestingController@test');
 
 });
+Route::get('test', 'Api\TestingController@test');

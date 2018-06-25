@@ -33,6 +33,21 @@ class TestingController extends Controller
             } catch (FcmClientException $e) {
             }
 
+            if(isset($response['results'][0]['error'])) {
+                $error = $response['results'][0]['error'];
+                if($error == "NotRegistered" || $error == "InvalidRegistration") {
+                    try {
+                        $key->delete();
+                    } catch (\Exception $e) {
+                    }
+                }
+
+            }
+//            return $response->results;
+//            if($response->results->error == "NotRegistered" || $response->results->error == "InvalidRegistration") {
+//                $key->delete();
+//            }
+
             $responses[] = $response;
         }
         return $responses;

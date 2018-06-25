@@ -119,7 +119,7 @@ class EventController extends Controller
         $this->validate($request, [
             'event_type' => 'required',
             'teacher_free_time_id' => 'required',
-            'short_place_name' => '',
+            'short_place_name' => 'required',
             'location_details' => 'required',
             'latitude' => 'required', // TODO: ini validasi
             'longitude' => 'required', // TODO: ini validasi

@@ -24,7 +24,6 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-
         $this->validate($request, [
             'username' => 'required',
             'password' => 'required',
@@ -45,12 +44,12 @@ class LoginController extends Controller
                 }
                 return $this->issueToken($request, 'password');
             } else {
-                return array(
+                return response()->json(array(
                     'message' => 'Email anda belum dikonfirmasi',
                     'errors' => [
                         'unvalidated' => ['Anda harus mengkonfirmasi email anda terlebih dahulu sebelum menggunakan aplikasi']
                     ]
-                );
+                ), 401);
             }
         } else {
             return $this->issueToken($request, 'password');

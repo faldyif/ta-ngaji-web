@@ -28,7 +28,7 @@ class UserResource extends JsonResource
             'id' => (string)$this->id,
             'name' => $genderPrefix . $this->name,
             'whatsapp_number' => $this->whatsapp_number,
-            'profile_pic_url' => url('storage/temp/' . $this->profile_pic_path),
+            'profile_pic_url' => $this->profile_pic_path,
         ];
     }
 }

@@ -36,6 +36,14 @@ class User extends Authenticatable
         return $this->hasMany('App\UserFirebaseToken');
     }
 
+    public function getProfilePicPathAttribute($value) {
+        if ($value === null) {
+            return "https://t3.ftcdn.net/jpg/00/64/67/80/240_F_64678017_zUpiZFjj04cnLri7oADnyMH0XBYyQghG.jpg";
+        } else {
+            return url('storage/temp/' . $value);
+        }
+    }
+
     // Show gender
     public function gender() {
         if($this->gender == 'M') return 'male';

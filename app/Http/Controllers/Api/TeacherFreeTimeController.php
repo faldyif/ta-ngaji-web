@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Resources\TeacherFreeTimeResource;
 use App\Http\Resources\TeacherFreeTimesResource;
 use App\TeacherFreeTime;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class TeacherFreeTimeController extends Controller
 {
@@ -47,11 +47,23 @@ class TeacherFreeTimeController extends Controller
             array_push($competence, 3);
         }
 
-        $teacherFreeTimes = TeacherFreeTime::with(['teacher'])
-            ->where('start_time', '<=', $request->time_start)
-            ->where('end_time', '>=', $request->time_end)
-            ->isWithinMaxDistance($request->latitude, $request->longitude)
-            ->get();
+        $teacherFreeTimes = null;
+        if(Auth::user()->role_id == 2) {
+            $teacherFreeTimes = TeacherFreeTime::with(['teacher'])
+                ->where('start_time', '<=', $request->time_start)
+                ->where('end_time', '>=', $request->time_end)
+                ->isWithinMaxDistance($request->latitude, $request->longitude)
+                ->excludeUser(Auth::user()->teacherRegistery->id)
+                ->get();
+
+        } else {
+            $teacherFreeTimes = TeacherFreeTime::with(['teacher'])
+                ->where('start_time', '<=', $request->time_start)
+                ->where('end_time', '>=', $request->time_end)
+                ->isWithinMaxDistance($request->latitude, $request->longitude)
+                ->get();
+
+        }
 
 //        return response()->json($teacherFreeTimes);
 

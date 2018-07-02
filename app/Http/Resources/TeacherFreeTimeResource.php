@@ -26,7 +26,8 @@ class TeacherFreeTimeResource extends JsonResource
             'teacher'   => new UserResource($this->user),
             'teacher_rank' => $this->user->teacherRegistery->teacher_level_id,
             'points' => $this->user->teacherRegistery->level->points,
-            'events' => new PrivateEventsResource($this->events($this->start_time, $this->end_time)),
+            'total_events' => $this->events->count(),
+            'events' => new PrivateEventsResource($this->events),
         ];
     }
 }

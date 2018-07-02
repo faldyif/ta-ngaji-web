@@ -6,7 +6,10 @@ use App\Event;
 use App\Http\Resources\EventResource;
 use App\Http\Resources\EventsResource;
 use App\TeacherFreeTime;
+use App\User;
+use App\UserFirebaseToken;
 use Carbon\Carbon;
+use Fcm\Exception\FcmClientException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -120,7 +123,7 @@ class EventController extends Controller
             'event_type' => 'required',
             'teacher_free_time_id' => 'required',
             'short_place_name' => 'required',
-            'location_details' => 'required',
+            'location_details' => '',
             'latitude' => 'required', // TODO: ini validasi
             'longitude' => 'required', // TODO: ini validasi
             'time_start' => 'required|date_format:Y-m-d H:i:s',
@@ -139,7 +142,9 @@ class EventController extends Controller
         }
         $event = new Event;
         $event->event_type = $event_type;
+        $event->teacher_free_time_id = $request->teacher_free_time_id;
         $event->teacher_id = $teacher_free_time->teacher->id;
+
         $event->student_id = Auth::user()->id;
         $event->short_place_name = $request->short_place_name;
         $event->latitude = $request->latitude;
@@ -148,6 +153,41 @@ class EventController extends Controller
         $event->start_time = $request->time_start;
         $event->end_time = $request->time_end;
         $event->save();
+
+        // Send firebase notification
+        $serverKey = "AAAAN9Oe-fA:APA91bGycXlRov00S8WQ2jy-p7atbrz7C8-v5mTP1rrf7lh5fz7-jwaz0PhoXlfcoY6rv9o6zooSGKCNPrsOUY_hE6mCBTzTrUwYI9BOkRmkLKN0xyN4Z_FBsbiPl85DY9AbdHI9GtES";
+        $senderId = "239773612528";
+
+        $client = new \Fcm\FcmClient($serverKey, $senderId);
+        $responses = [];
+
+        $user = User::find($event->teacher->user->id);
+        $firebaseTokens = UserFirebaseToken::where('user_id', $user->id)->get();
+        foreach ($firebaseTokens as $key) {
+            $notification = new \Fcm\Push\Notification();
+            $notification
+                ->setTitle('Pengajuan Ngaji Baru')
+                ->setBody('Halo '.$user->name.', '.$event->student->name.' melakukan pengajuan jadwal ngaji baru!')
+                ->addRecipient($key->firebase_token);
+
+            try {
+                $response = $client->send($notification);
+            } catch (FcmClientException $e) {
+            }
+
+            if(isset($response['results'][0]['error'])) {
+                $error = $response['results'][0]['error'];
+                if($error == "NotRegistered" || $error == "InvalidRegistration") {
+                    try {
+                    } catch (\Exception $e) {
+                    }
+                }
+
+            }
+
+            $responses[] = $response;
+        }
+        return $responses;
 
         return response()->json([], 204);
     }

@@ -24,5 +24,22 @@ class UsersTableSeeder extends Seeder
             'role_id' => 1,
             'verified' => true,
         ]);
+
+        $userFarhan = User::create([
+            'name' => 'Muhammad Farhan Najib',
+            'email' => 'farhan@gmail.com',
+            'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+            'remember_token' => str_random(10),
+            'whatsapp_number' => '‭+6282301888499‬',
+            'gender' => 'M',
+            'role_id' => 2,
+            'verified' => true,
+        ]);
+        \App\TeacherRegistery::create([
+            'user_id' => 77,
+            'teacher_level_id' => 1,
+            'registered_from' => \Carbon\Carbon::now(),
+            'teacher_competence' => 3,
+        ]);
     }
 }

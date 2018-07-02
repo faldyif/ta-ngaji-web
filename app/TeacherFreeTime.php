@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class TeacherFreeTime extends Model
 {
@@ -38,7 +39,16 @@ class TeacherFreeTime extends Model
             ->whereRaw("{$haversine} < ?", [$radius]);
     }
 
-    public function events($start, $end) {
-        return Event::timeInside($start, $end)->where('teacher_id', $this->teacher->id)->get();
+    // To count max distance (in kilometre), ordered by the shortest distance from current location
+    public function scopeUpcoming($query) {
+        return $query->whereDate('end_time', '>=', 'NOW()');
+    }
+
+    public function scopeExcludeUser($query, $user_id) {
+        return $query->whereNotIn('teacher_id', [$user_id]);
+    }
+
+    public function getEventsAttribute() {
+        return Event::timeInside($this->start_time, $this->end_time)->get();
     }
 }

@@ -14,6 +14,10 @@ class Event extends Model
         return $this->belongsTo('App\User', 'student_id');
     }
 
+    public function teacherFreeTime() {
+        return $this->belongsTo('App\TeacherFreeTime', 'teacher_free_time_id');
+    }
+
     public function eventType() {
         switch ($this->event_type) {
             case 1:

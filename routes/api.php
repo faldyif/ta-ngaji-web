@@ -36,6 +36,11 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
     Route::resource('users', 'UserController');
     //-- End Event Routes --//
 
+    Route::name('teacher.')->prefix('teacher')->namespace('Teacher')->group(function () {
+
+        Route::resource('freetime', 'TeacherFreeTimeController');
+    });
+
     //-- Begin Event Routes --//
     Route::resource('events', 'EventController');
     Route::get('history/events', 'EventController@indexHistory');

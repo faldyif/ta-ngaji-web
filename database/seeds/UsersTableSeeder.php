@@ -36,7 +36,7 @@ class UsersTableSeeder extends Seeder
             'verified' => true,
         ]);
         \App\TeacherRegistery::create([
-            'user_id' => 77,
+            'user_id' => $userFarhan->id,
             'teacher_level_id' => 1,
             'registered_from' => \Carbon\Carbon::now(),
             'teacher_competence' => 3,

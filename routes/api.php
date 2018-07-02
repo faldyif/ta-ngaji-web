@@ -39,6 +39,13 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
     Route::name('teacher.')->prefix('teacher')->namespace('Teacher')->group(function () {
 
         Route::resource('freetime', 'TeacherFreeTimeController');
+
+        Route::resource('event', 'EventController');
+        Route::get('list/event/unconfirmed', 'EventController@indexUnconfirmed');
+        Route::get('list/event/unconfirmed/count', 'EventController@countUnconfirmed');
+        Route::get('list/event/confirmed', 'EventController@indexUpcoming');
+        Route::post('update/event/status', 'EventController@changeStatus');
+
     });
 
     //-- Begin Event Routes --//

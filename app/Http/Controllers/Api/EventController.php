@@ -179,6 +179,7 @@ class EventController extends Controller
                 $error = $response['results'][0]['error'];
                 if($error == "NotRegistered" || $error == "InvalidRegistration") {
                     try {
+                        $key->delete();
                     } catch (\Exception $e) {
                     }
                 }
@@ -187,7 +188,6 @@ class EventController extends Controller
 
             $responses[] = $response;
         }
-        return $responses;
 
         return response()->json([], 204);
     }

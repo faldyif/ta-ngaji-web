@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Event;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TeacherFreeTimeResource extends JsonResource
@@ -26,7 +27,7 @@ class TeacherFreeTimeResource extends JsonResource
             'teacher'   => new UserResource($this->user),
             'teacher_rank' => $this->user->teacherRegistery->teacher_level_id,
             'points' => $this->user->teacherRegistery->level->points,
-            'total_events' => $this->events->count(),
+            'total_events' => Event::where('teacher_free_time_id', $this->id)->where('accepted', 1)->count(),
             'events' => new PrivateEventsResource($this->events),
         ];
     }

@@ -28,6 +28,7 @@ class EventResource extends JsonResource
             'teacher_rank' => $this->user->teacherRegistery->teacher_level_id,
             'teacher'   => new UserResource($this->user),
             'student'   => new UserResource($this->student),
+            'event_modification_request' => $this->eventModificationRequests->where('approved', null)->first(),
         ];
     }
 }

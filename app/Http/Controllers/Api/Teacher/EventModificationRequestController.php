@@ -3,16 +3,14 @@
 namespace App\Http\Controllers\Api\Teacher;
 
 use App\Event;
-use App\Http\Resources\EventsResource;
+use App\EventModificationRequest;
 use App\User;
 use App\UserFirebaseToken;
-use Carbon\Carbon;
 use Fcm\Exception\FcmClientException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 
-class EventController extends Controller
+class EventModificationRequestController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,83 +20,6 @@ class EventController extends Controller
     public function index()
     {
         //
-    }
-
-    public function indexUnconfirmed()
-    {
-        $user = Auth::user();
-        $event = Event::where('teacher_id', $user->teacherRegistery->id)->whereDate('end_time', '>=', Carbon::now())->where('accepted', null)->get();
-
-        return new EventsResource($event);
-    }
-
-    public function countUnconfirmed()
-    {
-        $user = Auth::user();
-        $event = Event::where('teacher_id', $user->teacherRegistery->id)->whereDate('end_time', '>=', Carbon::now())->where('accepted', null)->count();
-
-        return $event;
-    }
-
-    public function indexUpcoming()
-    {
-        $user = Auth::user();
-        $event = Event::where('teacher_id', $user->teacherRegistery->id)->whereDate('end_time', '>=', Carbon::now())->where('accepted', 1)->get();
-
-        return new EventsResource($event);
-    }
-
-    public function changeStatus(Request $request)
-    {
-        $event = Event::find($request->event_id);
-        $event->accepted = $request->status;
-        $event->save();
-
-        $agenda = "";
-        $agenda2 = "";
-        if($request->status == 1) {
-            $agenda = "Diterima";
-            $agenda2 = "menerima";
-        } else {
-            $agenda = "Ditolak";
-            $agenda2 = "menolak";
-        }
-
-        // Send firebase notification
-        $serverKey = "AAAAN9Oe-fA:APA91bGycXlRov00S8WQ2jy-p7atbrz7C8-v5mTP1rrf7lh5fz7-jwaz0PhoXlfcoY6rv9o6zooSGKCNPrsOUY_hE6mCBTzTrUwYI9BOkRmkLKN0xyN4Z_FBsbiPl85DY9AbdHI9GtES";
-        $senderId = "239773612528";
-
-        $client = new \Fcm\FcmClient($serverKey, $senderId);
-        $responses = [];
-
-        $user = $event->student;
-        $firebaseTokens = UserFirebaseToken::where('user_id', $user->id)->get();
-        foreach ($firebaseTokens as $key) {
-            $notification = new \Fcm\Push\Notification();
-            $notification
-                ->setTitle('Agenda Ngaji ' . $agenda)
-                ->setBody('Halo '.$user->name.', '.$event->teacher->name.' telah '. $agenda2 .' pengajuan jadwal ngaji anda!')
-                ->addRecipient($key->firebase_token);
-
-            try {
-                $response = $client->send($notification);
-            } catch (FcmClientException $e) {
-            }
-
-            if(isset($response['results'][0]['error'])) {
-                $error = $response['results'][0]['error'];
-                if($error == "NotRegistered" || $error == "InvalidRegistration") {
-                    try {
-                        $key->delete();
-                    } catch (\Exception $e) {
-                    }
-                }
-            }
-
-            $responses[] = $response;
-        }
-
-        return response()->json([],204);
     }
 
     /**
@@ -119,7 +40,56 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'event_id' => 'required',
+            'time_start' => 'date_format:Y-m-d H:i:s',
+            'time_end' => 'date_format:Y-m-d H:i:s',
+            'request_reason' => 'required',
+        ]);
+
+        $eventModificationRequest = new EventModificationRequest;
+        $eventModificationRequest->event_id = $request->event_id;
+        $eventModificationRequest->start_time = $request->time_start;
+        $eventModificationRequest->end_time = $request->time_end;
+        $eventModificationRequest->request_by_teacher = true;
+        $eventModificationRequest->request_reason = $request->request_reason;
+        $eventModificationRequest->save();
+
+        // Send firebase notification
+        $serverKey = "AAAAN9Oe-fA:APA91bGycXlRov00S8WQ2jy-p7atbrz7C8-v5mTP1rrf7lh5fz7-jwaz0PhoXlfcoY6rv9o6zooSGKCNPrsOUY_hE6mCBTzTrUwYI9BOkRmkLKN0xyN4Z_FBsbiPl85DY9AbdHI9GtES";
+        $senderId = "239773612528";
+
+        $client = new \Fcm\FcmClient($serverKey, $senderId);
+        $responses = [];
+
+        $user = User::find(Event::find($request->event_id)->student->id);
+        $firebaseTokens = UserFirebaseToken::where('user_id', $user->id)->get();
+        foreach ($firebaseTokens as $key) {
+            $notification = new \Fcm\Push\Notification();
+            $notification
+                ->setTitle('Permintaan Modifikasi Jadwal')
+                ->setBody('Halo '.$user->name.', '.Event::find($request->event_id)->teacher->name.' telah mengajukan permintaan perubahan jadwal ngaji anda!')
+                ->addRecipient($key->firebase_token);
+
+            try {
+                $response = $client->send($notification);
+            } catch (FcmClientException $e) {
+            }
+
+            if(isset($response['results'][0]['error'])) {
+                $error = $response['results'][0]['error'];
+                if($error == "NotRegistered" || $error == "InvalidRegistration") {
+                    try {
+                        $key->delete();
+                    } catch (\Exception $e) {
+                    }
+                }
+            }
+
+            $responses[] = $response;
+        }
+
+        return response()->json([], 204);
     }
 
     /**

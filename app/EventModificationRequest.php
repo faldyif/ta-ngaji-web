@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventModificationRequest extends Model
 {
-    //
+    protected $guarded = [];
 }

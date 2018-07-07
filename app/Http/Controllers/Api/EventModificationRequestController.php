@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Teacher;
+namespace App\Http\Controllers\Api;
 
 use App\Event;
 use App\EventModificationRequest;
@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Fcm\Exception\FcmClientException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 
 class EventModificationRequestController extends Controller
 {
@@ -34,17 +33,6 @@ class EventModificationRequestController extends Controller
         //
     }
 
-    public function countUnconfirmed()
-    {
-        $user = Auth::user();
-        $event = Event::where('teacher_id', $user->teacherRegistery->id)
-            ->whereDate('end_time', '>=', Carbon::now())
-            ->whereHas('unconfirmedEventModificationRequests')
-            ->count();
-
-        return $event;
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -64,7 +52,7 @@ class EventModificationRequestController extends Controller
         $eventModificationRequest->event_id = $request->event_id;
         $eventModificationRequest->start_time = $request->time_start;
         $eventModificationRequest->end_time = $request->time_end;
-        $eventModificationRequest->request_by_teacher = true;
+        $eventModificationRequest->request_by_teacher = false;
         $eventModificationRequest->approved = -1;
         $eventModificationRequest->request_reason = $request->request_reason;
         $eventModificationRequest->save();
@@ -76,13 +64,13 @@ class EventModificationRequestController extends Controller
         $client = new \Fcm\FcmClient($serverKey, $senderId);
         $responses = [];
 
-        $user = User::find(Event::find($request->event_id)->student->id);
+        $user = User::find(Event::find($request->event_id)->teacher->id);
         $firebaseTokens = UserFirebaseToken::where('user_id', $user->id)->get();
         foreach ($firebaseTokens as $key) {
             $notification = new \Fcm\Push\Notification();
             $notification
                 ->setTitle('Permintaan Modifikasi Jadwal')
-                ->setBody('Halo '.$user->name.', '.Event::find($request->event_id)->teacher->name.' telah mengajukan permintaan perubahan jadwal ngaji anda!')
+                ->setBody('Halo '.$user->name.', '.Event::find($request->event_id)->student->name.' telah mengajukan permintaan perubahan jadwal ngaji anda!')
                 ->addRecipient($key->firebase_token);
 
             try {
@@ -120,7 +108,6 @@ class EventModificationRequestController extends Controller
         $eventModificationRequest->approval_reason = $request->reason;
         $eventModificationRequest->save();
 
-
         $agenda = "";
         $agenda2 = "";
         if($request->status == 1) {
@@ -142,13 +129,13 @@ class EventModificationRequestController extends Controller
         $client = new \Fcm\FcmClient($serverKey, $senderId);
         $responses = [];
 
-        $user = User::find(Event::find($request->event_id)->student->id);
+        $user = User::find(Event::find($request->event_id)->teacher->id);
         $firebaseTokens = UserFirebaseToken::where('user_id', $user->id)->get();
         foreach ($firebaseTokens as $key) {
             $notification = new \Fcm\Push\Notification();
             $notification
                 ->setTitle('Permintaan Modifikasi Jadwal '.$agenda)
-                ->setBody('Halo '.$user->name.', '.$event->teacher->name.' telah '. $agenda2 .' pengajuan jadwal ngaji anda!')
+                ->setBody('Halo '.$user->name.', '.$event->student->name.' telah '. $agenda2 .' pengajuan jadwal ngaji anda!')
                 ->addRecipient($key->firebase_token);
             try {
                 $response = $client->send($notification);

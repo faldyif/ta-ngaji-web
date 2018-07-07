@@ -26,6 +26,7 @@ $factory->define(App\User::class, function (Faker $faker) {
         'gender' => ($gender == 'male' ? 'M' : 'F'),
         'role_id' => 1,
         'verified' => $faker->boolean,
-        'profile_pic_path' => $faker->image($dir = 'storage/app/public/temp', $width = 200, $height = 200, 'cats', false),
+        'profile_pic_path' => null,
+//        'profile_pic_path' => $faker->image($dir = 'storage/app/public/temp', $width = 200, $height = 200, 'cats', false),
     ];
 });

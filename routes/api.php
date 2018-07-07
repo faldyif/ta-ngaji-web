@@ -46,6 +46,8 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
         Route::get('list/event/confirmed', 'EventController@indexUpcoming');
         Route::post('update/event/status', 'EventController@changeStatus');
         Route::post('update/event', 'EventModificationRequestController@store');
+        Route::post('update/event/respond', 'EventModificationRequestController@respondRequest');
+        Route::get('event/modreq/count', 'EventModificationRequestController@countUnconfirmed');
 
     });
 
@@ -53,6 +55,9 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
     Route::resource('events', 'EventController');
     Route::get('history/events', 'EventController@indexHistory');
     Route::get('events/filter/all', 'EventController@indexFiltered');
+
+    Route::post('update/event', 'EventModificationRequestController@store');
+    Route::post('update/event/respond', 'EventModificationRequestController@respondRequest');
     //-- End Event Routes --//
 
     //-- Begin Teacher Free Time Routes --//

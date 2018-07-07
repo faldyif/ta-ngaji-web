@@ -6,7 +6,7 @@ $factory->define(\App\TeacherFreeTime::class, function (Faker $faker) {
     $randomTeacher = \App\TeacherRegistery::inRandomOrder()->first();
     $dateTimeStart = $faker->dateTimeBetween($startDate = 'now', $endDate = '+1 weeks');
     $dateTimeEnd = new \Carbon\Carbon($dateTimeStart->format(DATE_ISO8601));
-    $dateTimeEnd->addHours($faker->numberBetween(1, 5));
+    $dateTimeEnd->addHours($faker->numberBetween(1, 3));
 
     return [
         'teacher_id' => $randomTeacher->id,

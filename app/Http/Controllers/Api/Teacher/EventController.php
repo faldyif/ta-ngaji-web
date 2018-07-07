@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Teacher;
 
+use App\AttendeeLog;
 use App\Event;
 use App\Http\Resources\EventsResource;
 use App\User;
@@ -59,6 +60,18 @@ class EventController extends Controller
         if($request->status == 1) {
             $agenda = "Diterima";
             $agenda2 = "menerima";
+
+            $attendeeLog = new AttendeeLog;
+            $attendeeLog->event_id = $event->id;
+            $attendeeLog->student_user_id = $event->student->id;
+            $attendeeLog->unique_code = str_random(32);
+            if($event->teacher->level->points < 0) {
+                $attendeeLog->points_earned = $event->teacher->level->points;
+            } else {
+                $attendeeLog->points_earned = 0;
+            }
+            $attendeeLog->bonus_points = 0;
+            $attendeeLog->save();
         } else {
             $agenda = "Ditolak";
             $agenda2 = "menolak";

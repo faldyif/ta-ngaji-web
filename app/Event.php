@@ -22,6 +22,18 @@ class Event extends Model
         return $this->hasMany('App\EventModificationRequest');
     }
 
+    public function unconfirmedEventModificationRequests() {
+        return $this->hasMany('App\EventModificationRequest')->where('approved', -1);
+    }
+
+    public function presences() {
+        return $this->hasMany('App\AttendeeLog');
+    }
+
+    public function getPresenceAttribute() {
+        return $this->presences->first();
+    }
+
     public function eventType() {
         switch ($this->event_type) {
             case 1:

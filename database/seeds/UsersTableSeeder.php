@@ -12,7 +12,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\User::class, 50)->create();
+//        factory(App\User::class, 10)->create();
 
         User::create([
             'name' => 'Faldy Ikhwan Fadila',
@@ -35,11 +35,13 @@ class UsersTableSeeder extends Seeder
             'role_id' => 2,
             'verified' => true,
         ]);
-        \App\TeacherRegistery::create([
+        $tr = \App\TeacherRegistery::create([
             'user_id' => $userFarhan->id,
             'teacher_level_id' => 1,
             'registered_from' => \Carbon\Carbon::now(),
             'teacher_competence' => 3,
         ]);
+        $userFarhan->linked_id = $tr->id;
+        $userFarhan->save();
     }
 }

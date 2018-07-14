@@ -73,6 +73,16 @@ class EventController extends Controller
             $attendeeLog->bonus_points = 0;
             $attendeeLog->save();
         } else {
+            if($event->attendeeLog != null) {
+                $attendeeLog = $event->attendeeLog;
+
+                $student = $event->student;
+                $student->loyalty_points -= $attendeeLog->points_earned;
+                $student->save();
+
+                $attendeeLog->delete();
+            }
+
             $agenda = "Ditolak";
             $agenda2 = "menolak";
         }
@@ -90,7 +100,7 @@ class EventController extends Controller
             $notification = new \Fcm\Push\Notification();
             $notification
                 ->setTitle('Agenda Ngaji ' . $agenda)
-                ->setBody('Halo '.$user->name.', '.$event->teacher->name.' telah '. $agenda2 .' pengajuan jadwal ngaji anda!')
+                ->setBody('Halo '.$user->name.', Muhammad Farhan Najib'.$event->teacher->name.' telah '. $agenda2 .' pengajuan jadwal ngaji anda!')
                 ->addRecipient($key->firebase_token);
 
             try {
@@ -112,6 +122,16 @@ class EventController extends Controller
         }
 
         return response()->json([],204);
+    }
+
+    public function checkPresence(Request $request) {
+        $event = Event::find($request->event_id);
+        $presence = $event->presence;
+        if($presence->check_in_time != null) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     /**

@@ -19,6 +19,7 @@ class SelfUserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'whatsapp_number' => $this->whatsapp_number,
+            'profile_pic_url' => $this->profile_pic_path,
             'gender' => $this->gender(),
             'role' => $this->role(),
             'credits_amount' => $this->credits_amount,

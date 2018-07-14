@@ -48,6 +48,7 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
         Route::post('update/event', 'EventModificationRequestController@store');
         Route::post('update/event/respond', 'EventModificationRequestController@respondRequest');
         Route::get('event/modreq/count', 'EventModificationRequestController@countUnconfirmed');
+        Route::post('event/check/presence', 'EventController@checkPresence');
 
     });
 
@@ -55,6 +56,8 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
     Route::resource('events', 'EventController');
     Route::get('history/events', 'EventController@indexHistory');
     Route::get('events/filter/all', 'EventController@indexFiltered');
+    Route::get('list/events/2hours', 'EventController@showMinus2Hours');
+    Route::post('presence', 'EventController@attend');
 
     Route::post('update/event', 'EventModificationRequestController@store');
     Route::post('update/event/respond', 'EventModificationRequestController@respondRequest');
@@ -68,6 +71,7 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
     Route::get('user', function (Request $request) {
         return $request->user();
     });
+    Route::post('profile/update', 'UserController@updateProfile');
 
 
 });

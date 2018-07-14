@@ -28,6 +28,21 @@ class User extends Authenticatable
         'password', 'remember_token', 'email', 'credits_amount', 'loyalty_points', 'verified', 'verification_token', 'experience_points'
     ];
 
+    public function allEvents() {
+        if($this->role_id == 1)
+            return $this->hasMany('App\Event', 'student_id');
+        else if($this->role_id == 2)
+            return $this->hasMany('App\Event', 'student_id')->orWhere('teacher_id', $this->teacherRegistery->id);
+    }
+
+    public function mentoringEvents() {
+        return $this->hasMany('App\Event', 'teacher_id', 'linked_id');
+    }
+
+    public function studyEvents() {
+        return $this->hasMany('App\Event', 'student_id');
+    }
+
     public function teacherRegistery() {
         return $this->hasOne('App\TeacherRegistery');
     }

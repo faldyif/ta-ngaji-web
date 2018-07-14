@@ -15,14 +15,18 @@ class TeacherFreeTime extends Model
         return $this->belongsTo('App\TeacherRegistery', 'teacher_id');
     }
 
+    public function events() {
+        return $this->hasMany('App\Event');
+    }
+
     public function scopeTimeInside($query, $startTime, $endTime)
     {
-        return $query->whereDate('start_time', '>=', $startTime)->whereDate('end_time', '<=', $endTime);
+        return $query->where('start_time', '>=', $startTime)->where('end_time', '<=', $endTime);
     }
 
     public function scopeTimeBetween($query, $startTime, $endTime)
     {
-        return $query->whereDate('start_time', '<=', $startTime)->whereDate('end_time', '>=', $endTime);
+        return $query->where('start_time', '<=', $startTime)->where('end_time', '>=', $endTime);
     }
 
     // To count max distance (in kilometre), ordered by the shortest distance from current location
@@ -41,7 +45,7 @@ class TeacherFreeTime extends Model
 
     // To count max distance (in kilometre), ordered by the shortest distance from current location
     public function scopeUpcoming($query) {
-        return $query->whereDate('end_time', '>=', 'NOW()');
+        return $query->where('end_time', '>=', 'NOW()');
     }
 
     public function scopeExcludeUser($query, $user_id) {

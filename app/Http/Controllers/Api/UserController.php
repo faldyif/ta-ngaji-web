@@ -42,6 +42,35 @@ class UserController extends Controller
         //
     }
 
+    public function updateProfile(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'whatsapp_number' => 'required',
+        ]);
+
+        $user = Auth::user();
+        if(User::where('whatsapp_number', $request->whatsapp_number)->whereNotIn('id', [$user->id])->count() > 0) {
+            $error = \Illuminate\Validation\ValidationException::withMessages([
+                'whatsapp_number' => ['Nomor whatsapp yang anda masukkan sudah dipakai.'],
+            ]);
+            throw $error;
+        }
+
+        if($request->hasFile('photo') && $request->file('photo')->isValid()) {
+            $destinationPath = 'public/temp';
+            $extension = $request->photo->extension();
+            $fileName = date('YmdHms').'_'.Auth::user()->id.'.'.$extension;
+            $request->photo->storeAs($destinationPath, $fileName);
+            $user->profile_pic_path = $fileName;
+        }
+        $user->name = $request->name;
+        $user->whatsapp_number = $request->whatsapp_number;
+        $user->save();
+
+        return response()->json([],204);
+    }
+
     /**
      * Display the specified resource.
      *

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\AttendeeLog;
 use App\Event;
 use App\Http\Resources\EventResource;
 use App\Http\Resources\EventsResource;
@@ -137,8 +138,6 @@ class EventController extends Controller
             $event_type = 1;
         } else if($request->event_type == "tahfidz") {
             $event_type = 2;
-        } else if($request->event_type == "tadabbur") {
-            $event_type = 3;
         }
         $event = new Event;
         $event->event_type = $event_type;
@@ -153,6 +152,20 @@ class EventController extends Controller
         $event->start_time = $request->time_start;
         $event->end_time = $request->time_end;
         $event->save();
+
+        if($event->teacher->level->points < 0) {
+            $attendeeLog = new AttendeeLog;
+            $attendeeLog->event_id = $event->id;
+            $attendeeLog->student_user_id = $event->student->id;
+            $attendeeLog->unique_code = str_random(32);
+            $attendeeLog->points_earned = $event->teacher->level->points;
+            $attendeeLog->bonus_points = 0;
+            $attendeeLog->save();
+
+            $student = Auth::user();
+            $student->loyalty_points += $attendeeLog->points_earned;
+            $student->save();
+        }
 
         // Send firebase notification
         $serverKey = "AAAAN9Oe-fA:APA91bGycXlRov00S8WQ2jy-p7atbrz7C8-v5mTP1rrf7lh5fz7-jwaz0PhoXlfcoY6rv9o6zooSGKCNPrsOUY_hE6mCBTzTrUwYI9BOkRmkLKN0xyN4Z_FBsbiPl85DY9AbdHI9GtES";
@@ -190,6 +203,43 @@ class EventController extends Controller
         }
 
         return response()->json([], 204);
+    }
+
+    public function showMinus2Hours()
+    {
+        // TODO: Ini bahaya bahaya
+        $user = Auth::user();
+        $event = Event::with(['teacher.user'])
+            ->where(function ($qu) use ($user) {
+                $qu->where(function ($q) use ($user) {
+                    $q->where('accepted', 1)
+                        ->where('student_id', $user->id);
+                })->orWhere(function ($q) use ($user) {
+                    $q->where('accepted', 1)
+                        ->where('teacher_id', $user->linked_id);
+                });
+            })
+            ->orderBy('start_time')
+            ->get();
+
+        return new EventsResource($event);
+    }
+
+    public function attend(Request $request)
+    {
+        $event = Event::find($request->event_id);
+        $attendeeLog = AttendeeLog::where('unique_code', $request->unique_code)->first();
+        $attendeeLog->check_in_time = Carbon::now();
+        $attendeeLog->points_earned = $event->teacher->level->points;
+        $attendeeLog->save();
+
+        if($attendeeLog->points_earned > 0) {
+            $student = $event->student;
+            $student->loyalty_points += $attendeeLog->points_earned;
+            $student->save();
+        }
+
+        return response()->json([],204);
     }
 
     /**

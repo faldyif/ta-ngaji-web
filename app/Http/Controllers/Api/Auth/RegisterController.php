@@ -38,9 +38,6 @@ class RegisterController extends Controller
             'whatsapp_number' => request('whatsapp_number')
         ]);
 
-        dd($user);
-
-
         UserVerification::generate($user);
         UserVerification::send($user, 'Verifikasi Email ' . env('APP_NAME'));
 

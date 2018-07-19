@@ -69,6 +69,48 @@ class EventController extends Controller
         return new EventsResource($event->get());
     }
 
+    public function indexStudyTahsinHistory()
+    {
+        $user = Auth::user();
+        $event = Event::tahsin()
+            ->where('student_id', $user->id)
+            ->where('end_time', '<', Carbon::now())
+            ->where('accepted', 1)
+            ->whereHas('attendeeLogs', function ($query) {
+                $query->whereNotNull('rating_to_student');
+            });
+
+        return new EventsResource($event->get());
+    }
+
+    public function indexStudyTahfidzHistory()
+    {
+        $user = Auth::user();
+        $event = Event::tahfidz()
+            ->where('student_id', $user->id)
+            ->where('end_time', '<', Carbon::now())
+            ->where('accepted', 1)
+            ->whereHas('attendeeLogs', function ($query) {
+                $query->whereNotNull('rating_to_student');
+            });
+
+        return new EventsResource($event->get());
+    }
+
+    public function indexTeachingHistory()
+    {
+        $user = Auth::user();
+        $teacherRegistery = $user->teacherRegistery;
+        $event = Event::where('teacher_id', $teacherRegistery->id)
+            ->where('end_time', '<', Carbon::now())
+            ->where('accepted', 1)
+            ->whereHas('attendeeLogs', function ($query) {
+                $query->whereNotNull('rating_to_teacher');
+            });
+
+        return new EventsResource($event->get());
+    }
+
     public function indexFiltered(Request $request)
     {
         $this->validate($request, [
@@ -210,6 +252,13 @@ class EventController extends Controller
         // TODO: Ini bahaya bahaya
         $user = Auth::user();
         $event = Event::with(['teacher.user'])
+            ->where(function ($query) use ($user) {
+                $query->where('end_time', '>', Carbon::now()->subHour(1))
+                    ->orWhereHas('attendeeLogs', function ($qu) use ($user) {
+                        $qu->where('rating_to_student', null)
+                            ->orWhere('rating_to_teacher', null);
+                    });
+            })
             ->where(function ($qu) use ($user) {
                 $qu->where(function ($q) use ($user) {
                     $q->where('accepted', 1)
@@ -239,6 +288,31 @@ class EventController extends Controller
             $student->save();
         }
 
+        return response()->json([],204);
+    }
+
+    public function giveRating(Request $request) {
+        $this->validate($request, [
+            'event_id' => 'required',
+            'note' => 'required',
+            'rating' => 'required'
+        ]);
+
+        $event = Event::find($request->event_id);
+        $attendeeLog = $event->attendeeLogs->first();
+
+        // If the current event is a student
+        if($event->student_id == Auth::user()->id) {
+            // They can rate teacher
+            $attendeeLog->note_to_teacher = $request->note;
+            $attendeeLog->rating_to_teacher = $request->rating;
+        } else {
+            // Otherwise, rate the student, because you're a teacher!
+            $attendeeLog->note_to_student = $request->note;
+            $attendeeLog->rating_to_student = $request->rating;
+        }
+
+        $attendeeLog->save();
         return response()->json([],204);
     }
 

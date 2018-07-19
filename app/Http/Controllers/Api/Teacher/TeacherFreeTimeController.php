@@ -38,8 +38,9 @@ class TeacherFreeTimeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
@@ -50,6 +51,21 @@ class TeacherFreeTimeController extends Controller
             'time_start' => 'required|date_format:Y-m-d H:i:s',
             'time_end' => 'required|date_format:Y-m-d H:i:s',
         ]);
+
+        $teacherFreeTimes = TeacherFreeTime::onlyUser(Auth::user()->teacherRegistery->id)
+            ->dateTimeUnion($request->time_start, $request->time_end)
+            ->orDateTimeSubset($request->time_start, $request->time_end)
+            ->get();
+
+//        return response()->json($teacherFreeTimes);
+
+        if($teacherFreeTimes->count() > 0) {
+            $error = \Illuminate\Validation\ValidationException::withMessages([
+                'time_start' => ['Waktu yang anda tentukan bertabrakan dengan waktu luang yang sebelumnya sudah anda buat di database.'],
+                'time_end' => ['Waktu yang anda tentukan bertabrakan dengan waktu luang yang sebelumnya sudah anda buat di database.'],
+            ]);
+            throw $error;
+        }
 
         $teacher_free_time = new TeacherFreeTime;
         $teacher_free_time->teacher_id = Auth::user()->teacherRegistery->id;

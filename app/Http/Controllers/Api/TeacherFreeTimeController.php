@@ -52,10 +52,12 @@ class TeacherFreeTimeController extends Controller
         $user = Auth::user();
         $teacherFreeTimes = null;
         if(Auth::user()->role_id == 2) {
-
             $teacherFreeTimes = TeacherFreeTime::with(['teacher.level', 'events'])
                 ->whereHas('teacher.level', function ($query) use ($user) {
                     $query->pointEnough($user->loyalty_points);
+                })
+                ->whereHas('teacher.user', function ($query) use ($user) {
+                    $query->where('gender', $user->gender);
                 })
                 ->whereDoesntHave('events', function ($query) use ($request) {
                     $query->whereBetween('start_time', [$request->time_start, $request->time_end]);
@@ -66,11 +68,13 @@ class TeacherFreeTimeController extends Controller
                 ->isWithinMaxDistance($request->latitude, $request->longitude)
                 ->excludeUser(Auth::user()->teacherRegistery->id)
                 ->get();
-
         } else {
             $teacherFreeTimes = TeacherFreeTime::with(['teacher.level', 'events'])
                 ->whereHas('teacher.level', function ($query) use ($user) {
                     $query->pointEnough($user->loyalty_points);
+                })
+                ->whereHas('teacher.user', function ($query) use ($user) {
+                    $query->where('gender', $user->gender);
                 })
                 ->whereDoesntHave('events', function ($query) use ($request) {
                     $query->whereBetween('start_time', [$request->time_start, $request->time_end]);
@@ -80,7 +84,6 @@ class TeacherFreeTimeController extends Controller
                 ->timeBetween($request->time_start, $request->time_end)
                 ->isWithinMaxDistance($request->latitude, $request->longitude)
                 ->get();
-//            return $teacherFreeTimes;
         }
 
         return new TeacherFreeTimesResource($teacherFreeTimes);

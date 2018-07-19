@@ -22,7 +22,10 @@ class CreateAttendeeLogsTable extends Migration
             $table->string('unique_code')->unique();
             $table->dateTime('check_in_time')->nullable();
             $table->text('note_to_student')->nullable();
-            $table->text('note_to_next_teacher')->nullable();
+            $table->integer('rating_to_student')->nullable();
+            $table->text('note_to_teacher')->nullable();
+            $table->text('note_to_teacher')->nullable();
+            $table->integer('rating_to_teacher')->nullable();
             $table->integer('points_earned');
             $table->integer('bonus_points');
             $table->string('bonus_reason')->nullable();

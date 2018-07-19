@@ -55,12 +55,16 @@ Route::middleware(['auth:api'])->name('api.')->prefix('v1')->namespace('Api')->g
     //-- Begin Event Routes --//
     Route::resource('events', 'EventController');
     Route::get('history/events', 'EventController@indexHistory');
+    Route::get('history/study/tahsin', 'EventController@indexStudyTahsinHistory');
+    Route::get('history/study/tahfidz', 'EventController@indexStudyTahfidzHistory');
+    Route::get('history/teaching', 'EventController@indexTeachingHistory');
     Route::get('events/filter/all', 'EventController@indexFiltered');
     Route::get('list/events/2hours', 'EventController@showMinus2Hours');
     Route::post('presence', 'EventController@attend');
 
     Route::post('update/event', 'EventModificationRequestController@store');
     Route::post('update/event/respond', 'EventModificationRequestController@respondRequest');
+    Route::post('update/event/rate', 'EventController@giveRating');
     //-- End Event Routes --//
 
     //-- Begin Teacher Free Time Routes --//

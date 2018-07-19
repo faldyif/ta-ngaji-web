@@ -52,6 +52,38 @@ class TeacherFreeTime extends Model
         return $query->whereNotIn('teacher_id', [$user_id]);
     }
 
+    public function scopeOnlyUser($query, $user_id) {
+        return $query->where('teacher_id', $user_id);
+    }
+
+    public function scopeDateTimeUnion($query, $time_start, $time_end) {
+        $q = $query->where(function ($query) use ($time_start, $time_end) {
+                $query->where('end_time', '>=', $time_start)
+                    ->where('end_time', '<=', $time_end);
+            })
+            ->orWhere(function ($query) use ($time_start, $time_end) {
+                $query->where('start_time', '>=', $time_start)
+                    ->where('start_time', '<=', $time_end);
+            });
+        return $q;
+    }
+
+    public function scopeOrDateTimeSubset($query, $time_start, $time_end) {
+        $q = $query->orWhere(function ($qw) use ($time_start, $time_end) {
+                $qw->where(function ($query) use ($time_start, $time_end) {
+                        $query->where('start_time', '<', $time_start)
+                            ->where('end_time', '>', $time_start);
+                    })
+                    ->where(function ($query) use ($time_start, $time_end) {
+                        $query->where('start_time', '<', $time_end)
+                            ->where('end_time', '>', $time_end);
+                    });
+        });
+        return $q;
+    }
+
+
+
     public function getEventsAttribute() {
         return Event::timeInside($this->start_time, $this->end_time)->get();
     }
